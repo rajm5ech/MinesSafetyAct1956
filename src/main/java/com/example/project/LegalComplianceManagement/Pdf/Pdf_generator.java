@@ -20,405 +20,229 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 @RestController
-public class Pdf_generator 
-{
+public class Pdf_generator {
 	@Autowired
 	public EmployeeRepo e_repo;
-	
+
 	@Autowired
 	public ResourceLoader r_loader;
-	
+
+	private PdfPCell createCenteredCell(String content, Font font) {
+		PdfPCell cell = new PdfPCell(new Paragraph(content, font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		cell.setPaddingBottom(15);
+		cell.setPaddingTop(10);
+		return cell;
+	}
+
 	@GetMapping("employee/id/{id}/pdf")
-	public ResponseEntity<byte[]> generate_pdf(@PathVariable Integer id) throws Exception
-	{
+	public ResponseEntity<byte[]> generate_pdf(@PathVariable Integer id) throws Exception {
 		EmployeeCentral emp = e_repo.findByid(id);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Document doc = new Document();
-		
-		
-		PdfWriter.getInstance(doc ,baos);
-		
+
+		PdfWriter.getInstance(doc, baos);
+
 		doc.open();
-		
-		Font bold = FontFactory.getFont(FontFactory.HELVETICA_BOLD , 16);
-		Font normal = FontFactory.getFont(FontFactory.HELVETICA , 16);
-		
-		Paragraph formA = new Paragraph("Form A ", bold);
+		Font boldCenter = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 45);
+		Font bold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+		Font normal = FontFactory.getFont(FontFactory.HELVETICA, 16);
+
+		PdfPTable table = new PdfPTable(2);
+		table.setWidthPercentage(100);
+		table.setSpacingBefore(10);
+
+		Paragraph formA = new Paragraph("Form A", boldCenter);
 		formA.setAlignment(Element.ALIGN_CENTER);
 		doc.add(formA);
-		
-		  Paragraph space43 = new Paragraph(" ");
-		    doc.add(space43);
-		
+
+		Paragraph addSpace = new Paragraph(" ");
+		doc.add(addSpace);
+
+		Paragraph partA = new Paragraph("Part-A", bold);
+		partA.setAlignment(Element.ALIGN_CENTER);
+		doc.add(partA);
+
+		Paragraph addSpace1 = new Paragraph(" ");
+		doc.add(addSpace1);
+
+		/*
+		 * Image photo = Image.getInstance(emp.getImagedata());
+		 * photo.scaleToFit(50, 100);
+		 * Paragraph image = new Paragraph("Photo - " + photo);
+		 * image.setAlignment(Element.ALIGN_LEFT);
+		 * doc.add(photo);
+		 */
+		// Add the fields to the table
+		table.addCell(createCenteredCell("Name", normal));
+		table.addCell(createCenteredCell(emp.getName(), normal));
+
+		table.addCell(createCenteredCell("Surname", normal));
+		table.addCell(createCenteredCell(emp.getLastname(), normal));
+
+		table.addCell(createCenteredCell("Gender", normal));
+		table.addCell(createCenteredCell(emp.getGender(), normal));
+
+		table.addCell(createCenteredCell("Father / Spouse Name", normal));
+		table.addCell(createCenteredCell(emp.getGurdianname(), normal));
+
+		table.addCell(createCenteredCell("Date of Birth", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getDob()), normal));
+
+		table.addCell(createCenteredCell("Nationality", normal));
+		table.addCell(createCenteredCell(emp.getNation(), normal));
+
+		table.addCell(createCenteredCell("Education Level", normal));
+		table.addCell(createCenteredCell(emp.getEdu(), normal));
+
+		table.addCell(createCenteredCell("Date of Joining", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getDoj()), normal));
+
+		table.addCell(createCenteredCell("Designation", normal));
+		table.addCell(createCenteredCell(emp.getPost(), normal));
+
+		table.addCell(createCenteredCell("Category Address", normal));
+		table.addCell(createCenteredCell(emp.getSkill(), normal));
+
+		table.addCell(createCenteredCell("Type of Employment", normal));
+		table.addCell(createCenteredCell(emp.getType_emp(), normal));
+
+		table.addCell(createCenteredCell("Mobile", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getMob()), normal));
+
+		table.addCell(createCenteredCell("UAN", normal));
+		table.addCell(createCenteredCell(emp.getUan(), normal));
+
+		table.addCell(createCenteredCell("PAN", normal));
+		table.addCell(createCenteredCell(emp.getPan(), normal));
+
+		table.addCell(createCenteredCell("ESIC IP", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getEsicip()), normal));
+
+		table.addCell(createCenteredCell("LWF", normal));
+		table.addCell(createCenteredCell(emp.getLwf(), normal));
+
+		table.addCell(createCenteredCell("AADHAAR", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getAddhar()), normal));
+
+		table.addCell(createCenteredCell("Bank A/c Number", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getBankaccount()), normal));
+
+		table.addCell(createCenteredCell("Bank Branch (IFSC)", normal));
+		table.addCell(createCenteredCell(emp.getIfsc(), normal));
+
+		table.addCell(createCenteredCell("Present Address", normal));
+		table.addCell(createCenteredCell(emp.getPreadd(), normal));
+
+		table.addCell(createCenteredCell("Permanent Address", normal));
+		table.addCell(createCenteredCell(emp.getPermadd(), normal));
+
+		table.addCell(createCenteredCell("Service Book No.", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getMvtcert()), normal));
+
+		table.addCell(createCenteredCell("Date of Exit", normal));
+		table.addCell(createCenteredCell(String.valueOf(emp.getDoe()), normal));
+
+		table.addCell(createCenteredCell("Reason for Exit", normal));
+		table.addCell(createCenteredCell(emp.getRoe(), normal));
+
+		table.addCell(createCenteredCell("Mark of Identification", normal));
+		table.addCell(createCenteredCell(emp.getMoi(), normal));
+
+		PdfPCell photoCell = new PdfPCell();
 		Image photo = Image.getInstance(emp.getImagedata());
-		 photo.scaleToFit(100, 200);
-		 Paragraph image = new Paragraph("Photo - " +photo);
-		 image.setAlignment(Element.ALIGN_RIGHT);
-		doc.add(photo);
-		
-		  Paragraph space42 = new Paragraph(" ");
-		    doc.add(space42);
-		
-		Integer empslNumberInEmployeeRegister1 = emp.getId();
-		Paragraph slNumberInEmployeeRegister1 = new Paragraph("Sl. Number in Employee Register - " + empslNumberInEmployeeRegister1, normal);
-	    slNumberInEmployeeRegister1.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(slNumberInEmployeeRegister1);
-	   
-	    Paragraph space41 = new Paragraph(" ");
-	    doc.add(space41);
-		
-		String empname = emp.getName();
-		Paragraph emp_name = new Paragraph("Name - " +empname , normal);
-		emp_name.setAlignment(Element.ALIGN_LEFT);
-		doc.add(emp_name);
-		
-		  Paragraph space40 = new Paragraph(" ");
-		    doc.add(space40);
-		
-		String empsurname = emp.getLastname();
-		Paragraph emp_surname = new Paragraph("Surname - " +empsurname , normal);
-		emp_surname.setAlignment(Element.ALIGN_LEFT);
-		doc.add(emp_surname);
-		
-		  Paragraph space39 = new Paragraph(" ");
-		    doc.add(space39);
-		
-		String empgender = emp.getGender();
-		Paragraph emp_gender = new Paragraph("Gender - " + empgender, normal);
-		emp_gender.setAlignment(Element.ALIGN_LEFT);
-		doc.add(emp_gender);
-		
-		  Paragraph space38 = new Paragraph(" ");
-		    doc.add(space38);
-		
-		String empguardian = emp.getGurdianname();
-		Paragraph emp_guardian = new Paragraph("Father / Spouse Name - " + empguardian , normal);
-		emp_guardian.setAlignment(Element.ALIGN_LEFT);
-		doc.add(emp_guardian);
-		
-		  Paragraph space37 = new Paragraph(" ");
-		    doc.add(space37);
-		
-		Date empdob = emp.getDob();
-		Paragraph emp_dob = new Paragraph("Date of Birth - " + empdob , normal);
-		emp_dob.setAlignment(Element.ALIGN_LEFT);
-		doc.add(emp_dob);
-		
-		  Paragraph space36 = new Paragraph(" ");
-		    doc.add(space36);
-		
-		String empnation = emp.getNation();
-		Paragraph nationality = new Paragraph("Nationality - " + empnation, normal);
-	   nationality.setAlignment(Element.ALIGN_LEFT);
-		doc.add(nationality);
-		
-		  Paragraph space35 = new Paragraph(" ");
-		    doc.add(space35);
+		photo.scaleToFit(100, 200);
+		photoCell.addElement(photo);
+		table.addCell(createCenteredCell("Photo", normal));
+		table.addCell(photoCell);
 
-	    String emp_edu = emp.getEdu();
-		Paragraph educationLevel = new Paragraph("Education Level - " + emp_edu, normal);
-		educationLevel.setAlignment(Element.ALIGN_LEFT);
-		doc.add(educationLevel);
-		
-		  Paragraph space34 = new Paragraph(" ");
-		    doc.add(space34);
+		table.addCell(createCenteredCell("Specimen Signature/Thumb Impression", normal));
+		table.addCell(createCenteredCell(emp.getSignature(), normal));
 
-	    Date empdoj = emp.getDoj();
-		Paragraph dateOfJoining = new Paragraph("Date of Joining - " +empdoj, normal);
-		dateOfJoining.setAlignment(Element.ALIGN_LEFT);
-		doc.add(dateOfJoining);
-		
-		  Paragraph space33 = new Paragraph(" ");
-		    doc.add(space33);
+		table.addCell(createCenteredCell("Remarks", normal));
+		table.addCell(createCenteredCell(emp.getRemarks(), normal));
 
-		String empdesignation = emp.getPost();
-	    Paragraph designation = new Paragraph("Designation - " + empdesignation, normal);
-	    designation.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(designation);
-	    
-	    Paragraph space32 = new Paragraph(" ");
-	    doc.add(space32);
+		// Add the table to the document
+		doc.add(table);
 
-	    String empcategoryAddress = emp.getSkill();
-	    Paragraph categoryAddress = new Paragraph("Category Address - " + empcategoryAddress, normal);
-	    categoryAddress.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(categoryAddress);
-	    
-	    Paragraph space31 = new Paragraph(" ");
-	    doc.add(space31);
-
-	    String emptypeOfEmployment = emp.getType_emp();
-	    Paragraph typeOfEmployment = new Paragraph("Type of Employment - " + emptypeOfEmployment, normal);
-	    typeOfEmployment.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(typeOfEmployment);
-	    
-	    Paragraph space30 = new Paragraph(" ");
-	    doc.add(space30);
-
-	    Long empmobile = emp.getMob();
-	    Paragraph mobile = new Paragraph("Mobile - " + empmobile, normal);
-	    mobile.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(mobile);
-	    
-	    Paragraph space29 = new Paragraph(" ");
-	    doc.add(space29);
-
-	    String empuan = emp.getUan(); 
-	    Paragraph uan = new Paragraph("UAN - " +empuan, normal);
-	    uan.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(uan);
-	    
-	    Paragraph space28 = new Paragraph(" ");
-	    doc.add(space28);
-
-	    String emppan = emp.getPan();
-	    Paragraph pan = new Paragraph("PAN - " + emppan, normal);
-	    pan.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(pan);
-	    
-	    Paragraph space27 = new Paragraph(" ");
-	    doc.add(space27);
-
-	    Integer empesicIP = emp.getEsicip();
-	    Paragraph esicIP = new Paragraph("ESIC IP - " +empesicIP, normal);
-	    esicIP.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(esicIP);
-	    
-	    Paragraph space26 = new Paragraph(" ");
-	    doc.add(space26);
-
-	    String emplwf = emp.getLwf();
-	    Paragraph lwf = new Paragraph("LWF - " + emplwf, normal);
-	    lwf.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(lwf);
-	    
-	    Paragraph space25 = new Paragraph(" ");
-	    doc.add(space25);
-
-	    Long empaddhar = emp.getAddhar();
-	    Paragraph aadhaar = new Paragraph("AADHAAR - " + empaddhar, normal);
-	    aadhaar.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(aadhaar);
-	    
-	    Paragraph space24 = new Paragraph(" ");
-	    doc.add(space24);
-
-	    Long empbankAccountNumber = emp.getBankaccount();
-	    Paragraph bankAccountNumber = new Paragraph("Bank A/c Number - " + empbankAccountNumber, normal);
-	    bankAccountNumber.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(bankAccountNumber);
-	    
-	    Paragraph space23 = new Paragraph(" ");
-	    doc.add(space23);
-
-	    String empbankBranchIFSC = emp.getIfsc();
-	    Paragraph bankBranchIFSC = new Paragraph("Bank Branch (IFSC) - " + empbankBranchIFSC, normal);
-	    bankBranchIFSC.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(bankBranchIFSC);
-	    
-	    Paragraph space22 = new Paragraph(" ");
-	    doc.add(space22);
-	    
-	    String emppresentAddress = emp.getPreadd();
-	    Paragraph presentAddress = new Paragraph("Present Address - " + emppresentAddress, normal);
-	    presentAddress.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(presentAddress);
-	    
-	    Paragraph space21 = new Paragraph(" ");
-	    doc.add(space21);
-
-	    String emppermanentAddress = emp.getPermadd();
-	    Paragraph permanentAddress = new Paragraph("Permanent Address - " + emppermanentAddress, normal);
-	    permanentAddress.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(permanentAddress);
-	    
-	    Paragraph space20 = new Paragraph(" ");
-	    doc.add(space20);
-
-	    Long empserviceBookNo = emp.getMvtcert();
-	    Paragraph serviceBookNo = new Paragraph("Service Book No. - " +empserviceBookNo, normal);
-	    serviceBookNo.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(serviceBookNo);
-	    
-	    Paragraph space19 = new Paragraph(" ");
-	    doc.add(space19);
-
-	    Date empdoe = emp.getDoe();
-	    Paragraph dateOfExit = new Paragraph("Date of Exit - " + empdoe, normal);
-	    dateOfExit.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(dateOfExit);
-	    
-	    Paragraph space18 = new Paragraph(" ");
-	    doc.add(space18);
-
-	    String empreasonForExit = emp.getRoe();
-	    Paragraph reasonForExit = new Paragraph("Reason for Exit - " + empreasonForExit, normal);
-	    reasonForExit.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(reasonForExit);
-	    
-	    Paragraph space17 = new Paragraph(" ");
-	    doc.add(space17);
-
-	    String empmarkOfIdentification = emp.getMoi();
-	    Paragraph markOfIdentification = new Paragraph("Mark of Identification - " + empmarkOfIdentification, normal);
-	    markOfIdentification.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(markOfIdentification);
-	    
-	    Paragraph space16 = new Paragraph(" ");
-	    doc.add(space16);
-
-	    String empspecimenSignatureThumbImpression = emp.getSignature();
-	    Paragraph specimenSignatureThumbImpression = new Paragraph("Specimen Signature/Thumb Impression - " + empspecimenSignatureThumbImpression, normal);
-	    specimenSignatureThumbImpression.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(specimenSignatureThumbImpression);
-	    
-	    Paragraph space15 = new Paragraph(" ");
-	    doc.add(space15);
-
-	    String  empremarks = emp.getRemarks();
-	    Paragraph remarks = new Paragraph("Remarks - " + empremarks, normal);
-	    remarks.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(remarks);
-
-	   
+		// Add Form B
 		doc.newPage();
-		
-		Paragraph formB = new Paragraph("Form B" , bold);
-		formB.setAlignment(Element.ALIGN_CENTER);
-		doc.add(formB);
-		
-		Paragraph space14 = new Paragraph(" ");
-		doc.add(space14);
-		
-		Integer empslNumberInEmployeeRegister = emp.getId();
-		Paragraph slNumberInEmployeeRegister = new Paragraph("Sl. Number in Employee Register - " + empslNumberInEmployeeRegister, normal);
-	    slNumberInEmployeeRegister.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(slNumberInEmployeeRegister);
-	    
-	    Paragraph space13 = new Paragraph(" ");
-	    doc.add(space13);
-			
-	    String empname1 = emp.getName();
-		Paragraph emp_name1 = new Paragraph("Name - " +empname1 , normal);
-		emp_name1.setAlignment(Element.ALIGN_LEFT);
-		doc.add(emp_name1);
-		
-		Paragraph space12 = new Paragraph(" ");
-		doc.add(space12);
-		
-		Date empdateOfFirstAppointment = emp.getFirst_meeting();
-		Paragraph dateOfFirstAppointment = new Paragraph("Date of First Appointment with present Owner - " + empdateOfFirstAppointment, normal);
-		dateOfFirstAppointment.setAlignment(Element.ALIGN_LEFT);
-		doc.add(dateOfFirstAppointment);
-		
-		Paragraph space11 = new Paragraph(" ");
-		doc.add(space11);
 
-		Date empcertificateOfAgeFitness = emp.getFitness_not_adult();
-	    Paragraph certificateOfAgeFitness = new Paragraph("Certificate of age/fitness taken (for 14 to 18 Years) - " + empcertificateOfAgeFitness, normal);
-	    certificateOfAgeFitness.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(certificateOfAgeFitness);
-	    
-	    Paragraph space10 = new Paragraph(" ");
-	    doc.add(space10);
+		PdfPTable tableFormB = new PdfPTable(2);
+		tableFormB.setWidthPercentage(100);
+		tableFormB.setSpacingBefore(10);
 
-	    String empplaceOfEmployment = emp.getEmployment_place();
-	    Paragraph placeOfEmployment = new Paragraph("Place of Employment - " + empplaceOfEmployment, normal);
-	    placeOfEmployment.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(placeOfEmployment);
-	    
-	    Paragraph space9 = new Paragraph(" ");
-	    doc.add(space9);
+		Paragraph partB = new Paragraph("Part-B", bold);
+		partB.setAlignment(Element.ALIGN_CENTER);
+		doc.add(partB);
 
-	    Integer empcertificateOfVocationalTrainingNumber = emp.getVtnumber();
-	    Paragraph certificateOfVocationalTrainingNumber = new Paragraph("Certificate of Vocational Training Number - " + empcertificateOfVocationalTrainingNumber, normal);
-	    certificateOfVocationalTrainingNumber.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(certificateOfVocationalTrainingNumber);
-	    
-	    Paragraph space8 = new Paragraph(" ");
-	    doc.add(space8);
+		Paragraph addSpace2 = new Paragraph(" ");
+		doc.add(addSpace2);
+		// Add the fields to the table (Form B)
+		tableFormB.addCell(createCenteredCell("Sl. Number in Employee Register", normal));
+		tableFormB.addCell(createCenteredCell(String.valueOf(emp.getId()), normal));
 
-	    Date empcertificateOfVocationalTrainingDate = emp.getVtdate();
-	    Paragraph certificateOfVocationalTrainingDate = new Paragraph("Certificate of Vocational Training Date - " + empcertificateOfVocationalTrainingDate, normal);
-	    certificateOfVocationalTrainingDate.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(certificateOfVocationalTrainingDate);
-	    
-	    Paragraph space7 = new Paragraph(" ");
-	    doc.add(space7);
-	    
-	    String empnomineeName = emp.getNname();
-	    Paragraph nomineeName = new Paragraph("Nominee Name - " + empnomineeName, normal);
-	    nomineeName.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(nomineeName);
-	    
-	    Paragraph space6 = new Paragraph(" ");
-	    doc.add(space6);
+		tableFormB.addCell(createCenteredCell("Name", normal));
+		tableFormB.addCell(createCenteredCell(emp.getName(), normal));
 
-	    String empnomineeAddress = emp.getNadd();
-	    Paragraph nomineeAddress = new Paragraph("Nominee Address - " + empnomineeAddress, normal);
-	    nomineeAddress.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(nomineeAddress);
+		tableFormB.addCell(createCenteredCell("Date of First Appointment with present Owner", normal));
+		tableFormB.addCell(createCenteredCell(String.valueOf(emp.getFirst_meeting()), normal));
 
-	    Paragraph space5 = new Paragraph(" ");
-	    doc.add(space5);
-	    
-	    String empemergencyContactName = emp.getEcname();
-	    Paragraph emergencyContactName = new Paragraph("Emergency Contact Name - " + empemergencyContactName, normal);
-	    emergencyContactName.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(emergencyContactName);
+		tableFormB.addCell(createCenteredCell("Certificate of age/fitness taken (for 14 to 18 Years)", normal));
+		tableFormB.addCell(createCenteredCell(String.valueOf(emp.getFitness_not_adult()), normal));
 
-	    Paragraph space4 = new Paragraph(" ");
-	    doc.add(space4);
-	    
-	    String empemergencyContactRelationship = emp.getEcrelationship();
-	    Paragraph emergencyContactRelationship = new Paragraph("Emergency Contact Relationship - " + empemergencyContactRelationship, normal);
-	    emergencyContactRelationship.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(emergencyContactRelationship);
+		tableFormB.addCell(createCenteredCell("Place of Employment", normal));
+		tableFormB.addCell(createCenteredCell(emp.getEmployment_place(), normal));
 
-	    String empemergencyContactAddress = emp.getEcadd();
-	    Paragraph emergencyContactAddress = new Paragraph("Emergency Contact Address - " + empemergencyContactAddress, normal);
-	    emergencyContactAddress.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(emergencyContactAddress);
+		tableFormB.addCell(createCenteredCell("Certificate of Vocational Training Number", normal));
+		tableFormB.addCell(createCenteredCell(String.valueOf(emp.getVtnumber()), normal));
 
-	    Paragraph space3 = new Paragraph(" ");
-	    doc.add(space3);
-	    
-	    Long empemergencyContactMobile = emp.getEcmob();
-	    Paragraph emergencyContactMobile = new Paragraph("Emergency Contact Mobile - " + empemergencyContactMobile, normal);
-	    emergencyContactMobile.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(emergencyContactMobile);
-	    
-	    Paragraph space2 = new Paragraph(" ");
-	    doc.add(space2);
-	    
-	    String empremarks1 = emp.getRemarks();
-	    Paragraph remarks1 = new Paragraph("Remarks - " + empremarks1, normal);
-	    remarks1.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(remarks1);
-	    
-	    Paragraph space1 = new Paragraph(" ");
-	    doc.add(space1);
-	    
-	    String empsignatureOfMinesManager = emp.getSig_mines_manager();
-	    Paragraph signatureOfMinesManager = new Paragraph("Signature of Mines Manager -" +empsignatureOfMinesManager, normal);
-	    signatureOfMinesManager.setAlignment(Element.ALIGN_LEFT);
-	    doc.add(signatureOfMinesManager);
-		
+		tableFormB.addCell(createCenteredCell("Certificate of Vocational Training Date", normal));
+		tableFormB.addCell(createCenteredCell(String.valueOf(emp.getVtdate()), normal));
+
+		tableFormB.addCell(createCenteredCell("Nominee Name", normal));
+		tableFormB.addCell(createCenteredCell(emp.getNname(), normal));
+
+		tableFormB.addCell(createCenteredCell("Nominee Address", normal));
+		tableFormB.addCell(createCenteredCell(emp.getNadd(), normal));
+
+		tableFormB.addCell(createCenteredCell("Emergency Contact Name", normal));
+		tableFormB.addCell(createCenteredCell(emp.getEcname(), normal));
+
+		tableFormB.addCell(createCenteredCell("Emergency Contact Relationship", normal));
+		tableFormB.addCell(createCenteredCell(emp.getEcrelationship(), normal));
+
+		tableFormB.addCell(createCenteredCell("Emergency Contact Address", normal));
+		tableFormB.addCell(createCenteredCell(emp.getEcadd(), normal));
+
+		tableFormB.addCell(createCenteredCell("Emergency Contact Mobile", normal));
+		tableFormB.addCell(createCenteredCell(String.valueOf(emp.getEcmob()), normal));
+
+		tableFormB.addCell(createCenteredCell("Remarks", normal));
+		tableFormB.addCell(createCenteredCell(emp.getRemarks(), normal));
+
+		tableFormB.addCell(createCenteredCell("Signature of Mines Manager", normal));
+		tableFormB.addCell(createCenteredCell(emp.getSig_mines_manager(), normal));
+
+		// Add Form B table to the document
+		doc.add(tableFormB);
+
 		doc.close();
-	
 
 		HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + " " +emp.getName()+ emp.getId() +".pdf");
-        byte[] pdfContent = baos.toByteArray();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=" + " " + emp.getName() + emp.getId() + ".pdf");
+		byte[] pdfContent = baos.toByteArray();
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body( pdfContent);
-		
+		return ResponseEntity.ok()
+				.headers(headers)
+				.contentType(MediaType.APPLICATION_PDF)
+				.body(pdfContent);
 	}
-
 }
