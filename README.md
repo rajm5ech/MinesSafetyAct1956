@@ -1,4 +1,4 @@
-# Legal-Compliance-Management-System
+# MinesSafetyAct1956
 Following the guidelines of Mines Safety Act issude by GOI , this project aims to digiatlize the process of adhering the Act. 
 
 Its features are
